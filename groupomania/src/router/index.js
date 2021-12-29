@@ -8,6 +8,24 @@ const routes = [
     component: Home
   },
   {
+    path: '/signin',
+    name: 'SignIn',
+    component: Home
+  },
+  {
+    path: '/lostpassword',
+    name: 'Lostpassword',
+    component: Home
+  }, 
+  {
+    path: '/logged',
+    name: 'loged',
+    // route level code-splitting
+    // this generates a separate chunk (logged.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "logged" */ '../views/Connected.vue')
+  },
+  {
     path: '/about',
     name: 'About',
     // route level code-splitting
