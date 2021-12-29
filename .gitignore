@@ -1,0 +1,23 @@
+groupomania/.DS_Store
+groupomania/node_modules
+groupomania/dist
+
+
+# local env files
+groupomania/.env.local
+groupomania/.env.*.local
+
+# Log files
+groupomania/npm-debug.log*
+groupomania/yarn-debug.log*
+groupomania/yarn-error.log*
+groupomania/pnpm-debug.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
