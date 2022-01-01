@@ -1,7 +1,7 @@
 groupomania/.DS_Store
 groupomania/node_modules
 groupomania/dist
-groupomania/backend/node_modules
+/groupomania/backend/node_modules
 
 # local env files
 groupomania/.env.local
