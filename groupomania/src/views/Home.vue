@@ -36,10 +36,11 @@ export default {
       typePassword:'password',
       info:'',
       disabledButton:true,
+      
     }
   },
   computed:{
-    getStatus(){
+    getStatus(){    //on récupére le
       return this.$store.state.operatingStatus;
     },
     isDisabled(){
@@ -57,18 +58,22 @@ export default {
     },
   },
   methods:{
+    //afficher / masquer le mot de passe
     switchPassword(){
       return this.typePassword='password';
     },
     switchText(){
       return this.typePassword='text';
     },
+    //pour se connecter
     logAccount(){
       console.log('email: '+this.email+' mdp: '+this.password)
     },
+    //pour créer le compte
     createAccount(){
       console.log('email: '+this.email+' mdp: '+this.password+' nom: '+this.name+' prenom: '+this.firstname)
     },
+    //pour redemander un mot de passe
     askPassword(){
       console.log('email: '+this.email)
     },
