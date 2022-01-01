@@ -15,13 +15,12 @@ let userDefaultInfo={
 };
 
 let statusDefault='log'; // log, logging, create, creating, lost,logged
-let SSDefault='out'      // out: déconnecté, lined : connecté
+
 
 
 export default createStore({
   state: {
     operatingStatus:statusDefault,
-    siteStatus:SSDefault,
     user:userDefault,
     userInfo:userDefaultInfo,
     

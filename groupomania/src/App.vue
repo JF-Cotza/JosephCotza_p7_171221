@@ -1,14 +1,13 @@
 <template>
   <div>
-     <div id="nav" v-if='getSiteStatus=="out"'>
-      <router-link to="/" v-if="getStatus !='log'">Home</router-link> |
-      <router-link to="/signin" v-if="getStatus !='create'" @click='setStatusCreate'>S'enregistrer</router-link> |
-      <router-link to="/lostpassword" @click='setStatusLost'>Mot de passe perdu</router-link> |
-      <router-link to="/logged" @click='setStatusCreate'>Connecté</router-link> |
-      <router-link to="/about">About</router-link>
-
+     <div id="nav" v-if='getUser.token==""'>
+      <router-link class="link" to="/" v-if="getStatus !='log'" @click='setStatusLog'>Home</router-link>
+      <router-link class="link" to="/signin" v-if="getStatus !='create'" @click='setStatusCreate'>S'enregistrer</router-link> 
+      <router-link class="link" to="/lostpassword" v-if="getStatus !='lost'" @click='setStatusLost'>Mot de passe perdu</router-link>
+      <router-link class="link" to="/about" v-if="getStatus !='about'" @click='setStatusAbout'>About</router-link>
     </div>
     <div id="nav" v-else>
+      <router-link to="/logged" @click='setStatusCreate'>Connecté</router-link> |
       <!--<router-link to="/" v-if="getStatus !='log'">Home</router-link> |
       <router-link to="/signin" v-if="getStatus !='create'" @click='setStatusCreate'>S'enregistrer</router-link> |
       <router-link to="/lostpassword" @click='setStatusLost'>Mot de passe perdu</router-link> |
@@ -31,10 +30,13 @@ export default{
     setStatusLost(){
       this.$store.state.operatingStatus='lost';
     },
+    setStatusAbout(){
+      this.$store.state.operatingStatus='about';
+    },
   },
   computed:{
-    getSiteStatus(){
-      return this.$store.state.siteStatus;
+    getUser(){
+      return this.$store.state.user;
     },
     getStatus(){
       return this.$store.state.operatingStatus;
@@ -61,11 +63,20 @@ export default{
 
   a {
     font-weight: bold;
-    color: #2c3e50;
+    color: black;
+    text-decoration: none;
 
     &.router-link-exact-active {
-      color: #42b983;
+      color: white;
     }
   }
+}
+
+.link{
+  background: silver;
+  padding: 5px;
+  border:1px solid black;
+  border-radius: 5px;
+  margin:5px;
 }
 </style>
