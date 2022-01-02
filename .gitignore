@@ -2,10 +2,13 @@ groupomania/.DS_Store
 groupomania/node_modules
 groupomania/dist
 /groupomania/backend/node_modules
+/groupomania/backend/images/*.*
+
 
 # local env files
 groupomania/.env.local
 groupomania/.env.*.local
+
 
 # Log files
 groupomania/npm-debug.log*
