@@ -1,4 +1,10 @@
-import { createStore } from 'vuex'
+import { createStore } from 'vuex';
+const axios=require('axios');
+const defaultUrl='http://localhost:3000/api';
+
+const instance =axios.create({
+  baseURL:defaultUrl
+});
 
 //valeur par défaut
 let userDefault={
@@ -28,6 +34,15 @@ export default createStore({
   mutations: {
   },
   actions: {
+    storeLogAccount({commit},userInfos){
+        commit;
+        instance.post('/login', userInfos)     //on accéde à l'instance déclaré plus haut et on saisit le chemin vers la méthode dont on a besoin 
+         .then(function(res){
+           console.log(res);                     // on console le retour du backend
+         })
+        }
+        //console.log(userInfos) //affiche les valeurs reçues du frontend
+        //voir  https://fr.vuejs.org/v2/cookbook/using-axios-to-consume-apis.html pour axios
   },
   modules: {
   }

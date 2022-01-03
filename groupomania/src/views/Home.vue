@@ -67,7 +67,11 @@ export default {
     },
     //pour se connecter
     logAccount(){
-      console.log('email: '+this.email+' mdp: '+this.password)
+      //console.log('email: '+this.email+' mdp: '+this.password)
+      this.$store.dispatch('storeLogAccount',{
+        email:this.email,
+        password:this.password
+      })
     },
     //pour créer le compte
     createAccount(){
