@@ -18,7 +18,12 @@
           <button v-if='getStatus=="create"' id='create' :disabled='isDisabled' @click='createAccount'>S'enregistrer</button>
           <button v-if='getStatus=="lost"' id='lost' :disabled='isDisabled' @click='askPassword'>Réinitialiser le mot de passe</button>
         </div>
-         {{ typePassword }}
+         {{ getStatus }}
+        <div v-if='getStatus=="logged"'>
+            <p>id:{{ this.$store.state.user.id }}</p>
+            <p>rank:{{ this.$store.state.user.rank }}</p>
+            <p>token:{{ this.$store.state.user.token }}</p>
+        </div>  
   </div>
 </template>
 
@@ -35,8 +40,7 @@ export default {
       password:'',
       typePassword:'password',
       info:'',
-      disabledButton:true,
-      
+      disabledButton:true
     }
   },
   computed:{
@@ -72,10 +76,39 @@ export default {
         email:this.email,
         password:this.password
       })
+      .then(function(response){ // une fois le résultat de storeCreateAccount reçu
+        console.log('home.vue');
+        console.log(response.data); // on reçoit bien les infos du backend et donc de la db 
+        /*  this is undefined
+        this.$store.status.user.token=response.data.token;
+        this.$store.status.user.rank=response.data.userRank;
+        console.log('token:'+this.$store.state.user.token);
+        console.log('rank:'+this.$store.state.user.rank);
+        */
+      })
+      .catch(function(error){
+        console.log('home.vue');
+        console.log(error.message);
+        })//s'il y a une erreur
     },
     //pour créer le compte
     createAccount(){
-      console.log('email: '+this.email+' mdp: '+this.password+' nom: '+this.name+' prenom: '+this.firstname)
+      //console.log('email: '+this.email+' mdp: '+this.password+' nom: '+this.name+' prenom: '+this.firstname)
+      this.$store.dispatch('storeCreateAccount',{
+        email:this.email,
+        password:this.password,
+        name:this.name,
+        firstname:this.firstname
+      })
+      .then(function(response){
+        console.log('home.vue');
+        console.log(response);
+        console.log('token:'+this.$store.state.user.token);
+      })// une fois le résultat de storeLogAccount reçu
+      .catch(function(error){
+        console.log('home.vue');
+        console.log(error.message);
+        })//s'il y a une erreur
     },
     //pour redemander un mot de passe
     askPassword(){

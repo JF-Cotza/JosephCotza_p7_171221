@@ -1,9 +1,6 @@
 const http = require('http');
 const app = require('./app'); //on importe le contenu du fichier app
 
-//console.log('server.js')
-
-
 //fonction pour vérifier le port
 const normalizePort = val => {
     const port = parseInt(val, 10);      //converti val en une valeur en utilisant la base 10 => 0xF renvoit 15, 3000 renvoit 3000, abc renvoit NaN (not a number)

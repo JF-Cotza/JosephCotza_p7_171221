@@ -3,12 +3,12 @@ const uniqueValidator = require('mongoose-unique-validator');   //on a besoin du
 
 const userSchema = mongoose.Schema({                            //on crée le modèle
     email: { type: String, required: true, unique: true },      //unique => empêche en théorie le multi enregistrement avec le même mail
-    name:{type:String},
-    firstname:{type:String},
-    service:{type:String},
-    rank:{type:String},
-    description:{type:String},
-    avatar:{type:String},
+    name:{type:String, required:true},
+    firstname:{type:String,required:true},
+    service:{type:String,default:'training'},
+    rank:{type:String, default:1},
+    description:{type:String, default:''},
+    avatar:{type:String, default:''},
     password: { type: String, required: true }
 });
 
