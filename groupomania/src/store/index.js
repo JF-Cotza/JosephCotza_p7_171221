@@ -9,7 +9,7 @@ const instance =axios.create({
 //valeur par défaut
 let userDefault={
   token:'',
-  rank:-1
+  rank:-1               //-1 deconnecté, 0 à supprimer, 1 standard, 2 admin
 };
 
 let userDefaultInfo={
@@ -27,9 +27,9 @@ let statusDefault='log'; // log, loading, create, created, working, lost,logged
 export default createStore({
   state: {
     operatingStatus:statusDefault,
+    errorStatus:false,
     user:userDefault,
     userInfo:userDefaultInfo,
-    
   },
   mutations: {
     setStatus(state,operatingStatus){
@@ -39,6 +39,9 @@ export default createStore({
       state.user.id=user.userId;
       state.user.rank=user.userRank;
       state.user.token=user.token;
+    },
+    setError(state,errorStatus){
+      state.errorStatus=errorStatus
     }
   },
   actions: {
@@ -50,13 +53,15 @@ export default createStore({
             instance.post('/auth/login', userInfos)  //on accéde à l'instance déclaré plus haut et on saisit le chemin vers la méthode dont on a besoin
               .then(function(res){
                 commit('setStatus','logged');
-                commit('setUser',res.data)
-                console.log('storelogaccount');
-                console.log(res);     // on console le retour du backend
+                commit('setUser',res.data);
+                commit('setError',false)
+                //console.log('storelogaccount');
+                //console.log(res);     // on console le retour du backend
                resolve(res);                     
               })
               .catch(function(error){
                 commit('setStatus','log');
+                commit('setError',true)
                 reject(error);
               })
             })    
@@ -69,12 +74,14 @@ export default createStore({
             instance.post('/auth/signin', userInfos)  //on accéde à l'instance déclaré plus haut et on saisit le chemin vers la méthode dont on a besoin
               .then(function(res){
                 commit('setStatus','created');
-                console.log('storecreateaccount');
-                console.log(res);     // on console le retour du backend
+                commit('setError',false);
+                //console.log('storecreateaccount');
+                //console.log(res);     // on console le retour du backend
                resolve(res);                     
               })
               .catch(function(error){
                 commit('setStatus','create');
+                commit('setError',true);
                 reject(error);
               })
             })  

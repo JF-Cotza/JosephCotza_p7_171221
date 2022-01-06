@@ -7,7 +7,10 @@
       <router-link class="link" to="/about" v-if="getStatus !='about'" @click='setStatusAbout'>About</router-link>
     </div>
     <div id="nav" v-else>
-      <router-link to="/logged" @click='setStatusCreate'>Connecté</router-link> |
+      <router-link class="link" to="/logged" @click='setStatusConnected'>Connecté</router-link>
+      <router-link class="link" v-if='getRank==2' to="/admin" @click='setStatusAdmin'>Admin</router-link>
+      <router-link class="link" to="/profile" @click='setStatusProfile'>Modifier Mon Profil</router-link>
+      
       <!--<router-link to="/" v-if="getStatus !='log'">Home</router-link> |
       <router-link to="/signin" v-if="getStatus !='create'" @click='setStatusCreate'>S'enregistrer</router-link> |
       <router-link to="/lostpassword" @click='setStatusLost'>Mot de passe perdu</router-link> |
@@ -40,6 +43,9 @@ export default{
     },
     getStatus(){
       return this.$store.state.operatingStatus;
+    },
+    getRank(){
+      return this.$store.state.user.rank;
     },
   }
 }
@@ -79,4 +85,20 @@ export default{
   border-radius: 5px;
   margin:5px;
 }
+
+input, .input{
+  width:90%;
+  padding:5px 0;
+  font-size:1.2rem;
+}
+
+.input{
+  width: 90%;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+
 </style>

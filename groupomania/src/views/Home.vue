@@ -18,6 +18,13 @@
           <button v-if='getStatus=="create"' id='create' :disabled='isDisabled' @click='createAccount'>S'enregistrer</button>
           <button v-if='getStatus=="lost"' id='lost' :disabled='isDisabled' @click='askPassword'>Réinitialiser le mot de passe</button>
         </div>
+        <div v-if='getError==false'>
+          <p v-if='getStatus=="loging"'>Connexion en cours</p>
+          <p v-if='getStatus=="working"'>Création en cours</p>
+        </div>
+        <div v-else>
+          <p>Erreur dans le mot de mot de passe ou l'adresse e-mail</p>
+        </div>
          {{ getStatus }}
         <div v-if='getStatus=="logged"'>
             <p>id:{{ this.$store.state.user.id }}</p>
@@ -29,6 +36,8 @@
 
 <script>
 // @ is an alias to /src
+
+
 export default {
   name: 'Home',
   data(){
@@ -58,8 +67,11 @@ export default {
         }
         else{
         return true
-      }
+      }   
     },
+    getError(){
+      return this.$store.state.errorStatus;
+    }
   },
   methods:{
     //afficher / masquer le mot de passe
@@ -71,7 +83,9 @@ export default {
     },
     //pour se connecter
     logAccount(){
+      const $this=this;
       //console.log('email: '+this.email+' mdp: '+this.password)
+      this.$store.state.errorStatus=false; // on réinitialise l'erreur
       this.$store.dispatch('storeLogAccount',{
         email:this.email,
         password:this.password
@@ -79,12 +93,8 @@ export default {
       .then(function(response){ // une fois le résultat de storeCreateAccount reçu
         console.log('home.vue');
         console.log(response.data); // on reçoit bien les infos du backend et donc de la db 
-        /*  this is undefined
-        this.$store.status.user.token=response.data.token;
-        this.$store.status.user.rank=response.data.userRank;
-        console.log('token:'+this.$store.state.user.token);
-        console.log('rank:'+this.$store.state.user.rank);
-        */
+        //  this is undefined => on crée $this pour y avoir accés
+        $this.$router.push('Logged'); // on accéde à la route 'Logged' soit avec son nom soit avec le chemin relatif '/logged'
       })
       .catch(function(error){
         console.log('home.vue');
@@ -94,18 +104,20 @@ export default {
     //pour créer le compte
     createAccount(){
       //console.log('email: '+this.email+' mdp: '+this.password+' nom: '+this.name+' prenom: '+this.firstname)
+      const $this=this;
+      this.$store.state.errorStatus=false; // on réinitialise l'erreur
       this.$store.dispatch('storeCreateAccount',{
         email:this.email,
         password:this.password,
         name:this.name,
         firstname:this.firstname
       })
-      .then(function(response){
+      .then(function(response){ // une fois le résultat de storeLogAccount reçu
         console.log('home.vue');
         console.log(response);
-        console.log('token:'+this.$store.state.user.token);
-      })// une fois le résultat de storeLogAccount reçu
-      .catch(function(error){
+        $this.logAccount();
+        
+      })      .catch(function(error){
         console.log('home.vue');
         console.log(error.message);
         })//s'il y a une erreur
@@ -129,19 +141,6 @@ div{
   background-color: blue;
 }
 
-input, .input{
-  width:90%;
-  padding:5px 0;
-  font-size:1.2rem;
-}
-
-.input{
-  width: 90%;
-  padding: 0;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
 
 .showHide{
   width:8%;
@@ -169,7 +168,6 @@ h2{
   color:black;
   width:fit-content;
   margin:auto;
-
 }
 </style>
 
