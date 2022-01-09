@@ -72,6 +72,21 @@ exports.userSignin=(req,res,next)=>{
         .catch(error => res.status(500).json({error}));
 };
 
+exports.getProfile = (req, res, next) => {
+    User.findOne({ _id: req.params.id })
+        .then((user)=>{
+            diskImageUrl=user.imageUrl;
+            if (userObject.imageUrl){
+                const filename=diskImageUrl.split('/images/')[1]; 
+                fileSystem.unlink(`./images/${filename}`, ()=>console.log('fichier supprimé'))
+            }
+            else{console.log("image non modifiée")};
+        })
+        .catch(() => diskImageUrl='')
+
+};
+
+
 exports.userProfile = (req,res,next) => {
     let diskImageUrl;
     let key='15';
@@ -152,17 +167,7 @@ exports.getAllSauce = (req,res,next) => {
         })
 };
 
-exports.getOneSauce = (req, res, next) => {
-    Sauce.findOne( { _id : req.params.id })     //on recherche dans la DB, l'objet ayant pour _id, celui passé en paramétre
-        .then(sauce => {
-           sauce.likes=sauce.usersLiked.length;
-           sauce.dislikes=sauce.usersDisliked.length;
-            res.status(200).json(sauce); //sauceParsing)
-        })
-        .catch((error) => {
-            res.status(400).json({ error })
-        })
-};
+
 
 
 

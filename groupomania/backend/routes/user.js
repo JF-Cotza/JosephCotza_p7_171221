@@ -10,6 +10,7 @@ const auth=require('../middleware/auth');
 router.post('/login', toUserFunction.userLogin);
 router.post('/signin', toUserFunction.userSignin);
 //routes connectée=>nécessite l'authentification
+router.get('/getProfile',auth,toUserFunction.getProfile);
 router.put('/profile', auth, toUserFunction.userProfile);
 router.put('/delete', auth, toUserFunction.userDelete);
 

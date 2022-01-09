@@ -18,6 +18,8 @@ let userDefaultInfo={
   firstname:'',
   password:'',
   service:'',
+  description:'',
+  avatar:''
 };
 
 let statusDefault='log'; // log, loading, create, created, working, lost,logged
@@ -39,6 +41,17 @@ export default createStore({
       state.user.id=user.userId;
       state.user.rank=user.userRank;
       state.user.token=user.token;
+    },
+    setUserInfos(state,userInfo){
+      state.userInfo.id=userInfo.userId;
+      state.userInfo.email=userInfo.email;
+      state.userInfo.name=userInfo.name;
+      state.userInfo.firstname=userInfo.firstname
+      state.userInfo.service=userInfo.service;
+      state.userInfo.rank=userInfo.userRank;
+      state.userInfo.description=userInfo.description;
+      state.userInfo.avatar=userInfo.avatar;  
+      state.userInfo.password=userInfo.password
     },
     setError(state,errorStatus){
       state.errorStatus=errorStatus
@@ -99,8 +112,28 @@ export default createStore({
          .then(function(res){
            console.log(res);                     // on console le retour du backend
          })
-        }
-        //console.log(userInfos) //affiche les valeurs reçues du frontend
+        },
+    storeGetUser({commit}){
+      return new Promise ((resolve, reject)=>{     //on déclare une nouvelle fonction asynchrone (si ok, sinon)
+            commit('setStatus','loading');          // on appelle la mutation setStatus
+            instance.get('/auth/getProfile', this.user)  //on accéde à l'instance déclaré plus haut et on saisit le chemin vers la méthode dont on a besoin
+              .then(function(res){
+                commit('setStatus','loaded');
+                commit('setUser',res.data);
+                commit('setError',false)
+                //console.log('storelogaccount');
+                //console.log(res);     // on console le retour du backend
+               resolve(res);                     
+              })
+              .catch(function(error){
+                commit('setStatus','log');
+                commit('setError',true)
+                reject(error);
+              })
+            })    
+    }
+    //publication
+
         //voir  https://fr.vuejs.org/v2/cookbook/using-axios-to-consume-apis.html pour axios
   },
   modules: {
