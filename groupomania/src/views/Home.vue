@@ -7,7 +7,7 @@
         <input type="text" v-model='name' placeholder="Votre nom" v-if="getStatus=='create'">
         <input type="text" v-model='firstname' placeholder="Votre prénom" v-if="getStatus=='create'">
         <div class="input">
-          <input v-model='password' :rule='validPassword' placeholder="saisissez votre mot de passe" v-if="getStatus!='lost'">
+          <input :type='typePassword' v-model='password' :rule='validPassword' placeholder="saisissez votre mot de passe" v-if="getStatus!='lost'">
           <span class='showHide' v-if='getStatus!="lost"'>
             <button class='show' @click="switchText" v-if='typePassword=="password"' title='Afficher le mot de passe'><i class="fas fa-eye"></i></button>
             <button class='hide' @click="switchPassword" v-if='typePassword=="text"'><i class="fas fa-eye-slash" title='Masquer le mot de passe'></i></button>
@@ -25,8 +25,8 @@
         <div v-else>
           <p v-if='getStatus=="log"'>Erreur dans le mot de mot de passe ou l'adresse e-mail</p>
           <p v-if='getStatus=="create"'>Adresse e-mail déjà utilisée</p>
-          {{message}}
         </div> 
+         {{message}}
   </div>
 </template>
 
@@ -45,8 +45,9 @@ export default {
       password:'',
       typePassword:'password',
       info:'',
+      message:'',
       disabledButton:true,
-      passwordRegex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).*$/i 
+      passwordRegex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).*$/i,
     }
   },
   computed:{
@@ -125,8 +126,8 @@ export default {
     //pour créer le compte
     createAccount(){
       //console.log('email: '+this.email+' mdp: '+this.password+' nom: '+this.name+' prenom: '+this.firstname)
-      if(this.validPassword(this.password)==false || this.validEmail(this.email)==false){
-         return this.message='le mot de passe ne respecte pas le format : min 10 caractére au moins 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial'
+      if(this.validPassword(this.password)==false){
+         return this.message='le mot de passe ne respecte pas le format : min 10 caractére au moins 1 lettre, 1 chiffre, 1 caractère spécial'
       }
       if(this.validEmail(this.email)==false){
          return this.message="le format de l'email est invalide"
@@ -161,8 +162,16 @@ export default {
         console.log('email: '+this.email)
       }
     },
+    mounted:function(){      //lors de la création de la vue on vérifie que le rang est différent de -1 car -1= déconnecté
+   //         const $this=this;
+            if(this.$store.state.user.rank!=-1){
+                this.$router.push('/logged');
+                //console.log(this.$store.state.user);
+                this.$store.state.operatingStatus='logged';
+                return;     // pour désactiver la suite du code si on est considéré comme déconnecté
+            }
   },
-  
+  } 
 
 
 }

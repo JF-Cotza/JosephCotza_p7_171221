@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const toUserFunction = require('../controllers/user');
-const auth=require('../middleware/auth');
+const checker=require('../middleware/auth');
 
 
 
@@ -10,9 +10,9 @@ const auth=require('../middleware/auth');
 router.post('/login', toUserFunction.userLogin);
 router.post('/signin', toUserFunction.userSignin);
 //routes connectée=>nécessite l'authentification
-router.get('/getProfile',auth,toUserFunction.getProfile);
-router.put('/profile', auth, toUserFunction.userProfile);
-router.put('/delete', auth, toUserFunction.userDelete);
+router.get('/getProfile',checker, toUserFunction.getProfile);
+router.put('/profile', checker)//, toUserFunction.userProfile);
+router.delete('/delete', checker)//, toUserFunction.userDelete);
 
 
 module.exports = router;

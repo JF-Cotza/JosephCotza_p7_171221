@@ -1,6 +1,6 @@
 <template>
   <div>
-     <div id="nav" v-if='getUser.token==""'>
+     <div id="nav" v-if='this.$store.state.user.rank==-1'>
       <router-link class="link" to="/" v-if="getStatus !='log'" @click='setStatusLog'>Home</router-link>
       <router-link class="link" to="/signin" v-if="getStatus !='create'" @click='setStatusCreate'>S'enregistrer</router-link> 
       <router-link class="link" to="/lostpassword" v-if="getStatus !='lost'" @click='setStatusLost'>Mot de passe perdu</router-link>
@@ -9,13 +9,8 @@
     <div id="nav" v-else>
       <router-link class="link" to="/logged" @click='setStatusConnected'>Connecté</router-link>
       <router-link class="link" v-if='getRank==2' to="/admin" @click='setStatusAdmin'>Admin</router-link>
-      <router-link class="link" to="/profile" @click='setStatusProfile'>Modifier Mon Profil</router-link>
-      
-      <!--<router-link to="/" v-if="getStatus !='log'">Home</router-link> |
-      <router-link to="/signin" v-if="getStatus !='create'" @click='setStatusCreate'>S'enregistrer</router-link> |
-      <router-link to="/lostpassword" @click='setStatusLost'>Mot de passe perdu</router-link> |
-      <router-link to="/logged" @click='setStatusCreate'>Connecté</router-link> |
-      <router-link to="/about">About</router-link>-->
+      <router-link class="link" to="/profile">Mon Profil</router-link>
+      <button class="link" @click="disconnect" >déconnecter</button>
     </div>
     <router-view /> 
   </div>  
@@ -36,6 +31,14 @@ export default{
     setStatusAbout(){
       this.$store.state.operatingStatus='about';
     },
+    disconnect(){
+      this.$store.state.user.rank=-1;//sinon même déconnecté les boutons du mode de connexion apparaissent
+      this.$store.commit('logout');
+      this.$router.push('/');
+    }
+  },
+  created:function(){
+    return this.tokenExist=this.$store.state.user.token;
   },
   computed:{
     getUser(){

@@ -72,22 +72,23 @@ exports.userSignin=(req,res,next)=>{
         .catch(error => res.status(500).json({error}));
 };
 
+
 exports.getProfile = (req, res, next) => {
-    User.findOne({ _id: req.params.id })
+    //console.log('getProfile');
+    const id=req.headers.authorization.split(' ')[0]; 
+    User.findOne({ _id: id })
+    //User.findOne({ _id: req.body.userId })
         .then((user)=>{
-            diskImageUrl=user.imageUrl;
-            if (userObject.imageUrl){
-                const filename=diskImageUrl.split('/images/')[1]; 
-                fileSystem.unlink(`./images/${filename}`, ()=>console.log('fichier supprimé'))
+            if(!user){
+                return res.status(401).json({error:"l'utilisateur n'existe pas"})
             }
-            else{console.log("image non modifiée")};
-        })
-        .catch(() => diskImageUrl='')
+            //console.log('found'); //ok
+        
+            res.status(200).json({user}) //on récupere les infos de user
+            })
+}
 
-};
-
-
-exports.userProfile = (req,res,next) => {
+exports.udateProfile = (req,res,next) => {
     let diskImageUrl;
     let key='15';
 
@@ -140,23 +141,6 @@ exports.userDelete = (req,res,next) => {
 /*
 const Sauce = require('../models/sauce');
 
-
-exports.createSauce = (req,res, next) => {
-    const sauceParsing=JSON.parse(req.body.sauce)
-    delete sauceParsing._id; // pour supprimer un id présent dans la req
-    const sauce=new Sauce({
-        ...sauceParsing,
-        imageUrl:`${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
-        
-    });
-    sauce.save()
-        .then(()=>{
-              res.status(201).json({message:'sauce créée'})})
-        .catch(error=> {
-            res.status(400).json({error})}
-            );
-};
-
 exports.getAllSauce = (req,res,next) => {
     Sauce.find()                  //find permet de chercher dans la DB. sans rien = tous
         .then ((sauces)=>{
@@ -166,11 +150,6 @@ exports.getAllSauce = (req,res,next) => {
             res.status(400).json({error})
         })
 };
-
-
-
-
-
 
 exports.likes =(req,res,next)=>{
     let query = { _id: req.params.id };
