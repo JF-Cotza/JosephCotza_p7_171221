@@ -8,7 +8,6 @@ const userSchema = mongoose.Schema({                            //on crée le mo
     service:{type:String,default:'training'},
     rank:{type:String, default:1},
     description:{type:String, default:''},
-    avatar:{type:String, default:''},
     password: { type: String, required: true }
 });
 

@@ -1,4 +1,6 @@
 import { createStore } from 'vuex';
+import FormData from 'form-data';
+
 //import user from '../../backend/models/user';
 const axios=require('axios');
 const defaultUrl='http://localhost:3000/api';
@@ -25,14 +27,6 @@ let userDefaultInfo={
 
 let statusDefault='log'; // log, loading, create, created, working, lost,logged
 
-let defaultState={
-  user:userDefault,
-  operatingStatus:statusDefault,
-  userInfo:userDefaultInfo,
-  errorStatus:false
-}
-
-
 let localStorageUser=localStorage.getItem('user');
 let userReturn;
 let statusReturn;
@@ -58,6 +52,8 @@ export default createStore({
     user:userReturn,
     userInfo:userDefaultInfo,
     initUser:{},
+    singlePublication:{},
+    publication:[]
   },
   mutations: {
     setStatus(state,operatingStatus){
@@ -72,8 +68,6 @@ export default createStore({
       //console.log(instance.defaults.headers.common['Authorization']); //ok
     },
     setUserInfos(state,userInfo){
-      //console.log('setUserInfo');
-      //console.log(userInfo.user._id);
       state.userInfo.id=userInfo.user._id;
       state.userInfo.email=userInfo.user.email;
       state.userInfo.name=userInfo.user.name;
@@ -82,17 +76,23 @@ export default createStore({
       state.userInfo.rank=userInfo.user.userRank;
       state.userInfo.description=userInfo.user.description;
       state.userInfo.avatar=userInfo.user.avatar;  
-      //state.userInfo.password=userInfo.user.password;
     },
     setError(state,errorStatus){
       state.errorStatus=errorStatus
     },
     logout(state){
       localStorage.removeItem('user');
-        state.user=defaultState.user;
-        state.operatingStatus=defaultState.operatingStatus;
-        state.userInfo=defaultState.userInfo;
-        state.errorStatus=defaultState.errorStatus;
+      state.user.token=' ';
+      state.user.rank=-1;
+      state.user.id=' ';
+      state.operatingStatus='log';
+      state.userInfo={};
+      state.initUser={};
+      state.errorStatus=false;
+      console.log('logout');
+      console.log(state.user);
+      console.log('userDefault');
+      console.log(userDefault);
     },
     userCopy(state,initUser){
       state.initUser.id=initUser.user._id;
@@ -103,6 +103,9 @@ export default createStore({
       state.initUser.rank=initUser.user.userRank;
       state.initUser.description=initUser.user.description;
       state.initUser.avatar=initUser.user.avatar;
+    },
+    setPublication(state,singlePublication){
+      state.singlePublication=singlePublication
     }
   },
   actions: {
@@ -125,8 +128,7 @@ export default createStore({
                 commit('setError',true)
                 reject(error);
               })
-            })    
-        
+            })     
       },
     storeCreateAccount({commit},userInfos){
         this.operatingStatus='creating';
@@ -147,47 +149,168 @@ export default createStore({
               })
             })  
         },
-    storeDeleteAccount({commit},userInfos){
+    storeDeleteAccount({commit},userInfo){
         commit;
-        instance.put('/delete', userInfos)     //on accéde à l'instance déclaré plus haut et on saisit le chemin vers la méthode dont on a besoin 
+        
+        console.log('storedelete');
+        console.log(userInfo);
+        instance.delete('auth/delete', 
+          {userId:userInfo})     //on accéde à l'instance déclaré plus haut et on saisit le chemin vers la méthode dont on a besoin 
          .then(function(res){
-           console.log(res);                     // on console le retour du backend
+            console.log(res);                     // on console le retour du backend
+            commit('setStatus','log');
+            commit('logout');
+            
          })
         },
     storeUpdateAccount({commit},userInfos){
         commit;
-        instance.put('/update', userInfos)     //on accéde à l'instance déclaré plus haut et on saisit le chemin vers la méthode dont on a besoin 
+        instance.put('/auth/update', 
+          { userId:userInfos.userId,
+            email:JSON.parse(localStorage.getItem('user')).email,
+            name:JSON.parse(localStorage.getItem('user')).name,
+            firstname:JSON.parse(localStorage.getItem('user')).firstname,
+            rank:JSON.parse(localStorage.getItem('user')).rank,
+            service:JSON.parse(localStorage.getItem('user')).service,
+            description:JSON.parse(localStorage.getItem('user')).rank
+          })
+           
          .then(function(res){
            console.log(res);                     // on console le retour du backend
          })
         },
     storeGetProfile({commit},userInfo){
       commit('setStatus','loading');          // on appelle la mutation setStatus
-      instance.get('/auth/getProfile',
+      instance.get('/auth/getProfile',        //on accéde à l'instance déclaré plus haut et on saisit le chemin vers la méthode dont on a besoin
          {userId: userInfo }
-         )  //on accéde à l'instance déclaré plus haut et on saisit le chemin vers la méthode dont on a besoin
-                                              //ici on n'a pas besoin de paramètres car le token est inclus dans l'instance  
-            .then(function(res){
+      )  
+        .then(function(res){
             //  console.log('storeGetProfile.then'); 
             //  console.log(res.data);
               commit('setStatus','profile');
               commit('setUserInfos',res.data);
               commit('userCopy',res.data);
               commit('setError',false);
-                
-                //console.log(res);     // on console le retour du backend                    
-              })/*
+             /* console.log('index>StoreGetProfile>.then');  
+              console.log(res.data);     // on console le retour du backend                    
+             */ 
+            })
               .catch(function(error){
                 commit('setStatus','log');
                 commit('setError',true);
                 console.log(error.message)
-              })*/
+              })
               
-    }
+    },
     //publication
+    storeCreatePublication({commit},publicationInfos){
+      let formData=new FormData
+      console.log('index>file');
+      console.log(publicationInfos);
+      //console.log(publicationInfos.publication.file.name);
+      //let fileImport=imageFile.append('file',publicationInfos.publication.file, publicationInfos.publication.file.name )
+      //let fileImport=formData.append('username','Chis')
+     // fileImport+=imageFile.append('firstname','tata');
+      formData.append('username','Chis'); //fileImport;
+      publicationInfos.finish='tutu';
+      console.log('index>createPub');
+      console.log(formData)//fileImport);//publicationInfos);
+      this.operatingStatus='creating';
+      return new Promise ((resolve, reject)=>{     //on déclare une nouvelle fonction asynchrone (si ok, sinon)
+        commit('setStatus','working');
+          instance.post('/publications/create',
+            publicationInfos,
+            { 
+              headers:{
+              "Content-type": "multipart/form-data"
+              }
+            }
+          )  //on accéde à l'instance déclaré plus haut et on saisit le chemin vers la méthode dont on a besoin
+              .then(function(res){
+                commit('setStatus','created');
+                commit('setError',false);
+                resolve(res);                     
+              })
+              .catch(function(error){
+                commit('setStatus','create');
+                commit('setError',true);
+                reject(error);
+              })
+            })  
+        },
+      storeGetAllPublications({commit}){
+        this.operatingStatus='loading';
+        return new Promise ((resolve, reject)=>{
+        instance.get('/publications/all')  //on accéde à l'instance déclaré plus haut et on saisit le chemin vers la méthode dont on a besoin
+          .then(function(res){
+            commit('setStatus','loading');
+            commit('setError',false);
+            console.log('all')
+            console.log(res.data)
+            resolve(res);                     
+          })
+          .catch(function(error){
+            commit('setStatus','create');
+            commit('setError',true);
+            console.log(error)
+            reject(error);
+          })
+        }
+      )},
+      storeGetOnePublication({commit},publicationId){
+        commit;
+        console.log('storeGetOnePublication')
+        console.log(publicationId)
+        return new Promise ((resolve, reject)=>{     //on déclare une nouvelle fonction asynchrone (si ok, sinon)
+            commit('setStatus','loading');          // on appelle la mutation setStatus
+            instance.get('/publications/getOne/',{params:{id:publicationId}})  //on accéde à l'instance déclaré plus haut et on saisit le chemin vers la méthode dont on a besoin
+              .then(function(res){
+                commit('setStatus','loaded');
+                commit('setPublication',res.data);
+                commit('setError',false)
+                //console.log('storelogaccount');
+                //console.log(res);     // on console le retour du backend
+               resolve(res);                     
+              })
+              .catch(function(error){
+                commit('setStatus','log');
+                commit('setError',true)
+                reject(error);
+              })
+            })    
+      },
+      updatePublication({commit},publicationInfos){
+        commit;
+        console.log('index>update')
+        console.log(publicationInfos);
+        instance.put('/publications/update',publicationInfos)  //on accéde à l'instance déclaré plus haut et on saisit le chemin vers la méthode dont on a besoin
+          .then(function(res){
+            commit('setStatus','updating');
+            //commit('setPublication',res.data);
+            //commit('setError',false);
+            //console.log('storelogaccount');
+            console.log(res);     // on console le retour du backend
+            //resolve(res);                     
+          })
+          .catch(function(error){
+            commit('setStatus','log');
+            commit('setError',true)
+            console.log(error.message)
+            //reject(error);
+          })  
+      },
+      commentPublication({commit},commentInfo){
+        commit;
+        console.log('comment publication');
+        console.log(commentInfo);
+        instance.post('/publications/comment',commentInfo)
+        .then(function(res){
+          console.log('comment publication>then>res');
+          console.log(res);
+        })
+      }
 
         //voir  https://fr.vuejs.org/v2/cookbook/using-axios-to-consume-apis.html pour axios
   },
-  modules: {
-  }
+
 })

@@ -25,6 +25,14 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "logged" */ '../views/Connected.vue')
   },
+  {    
+    path: '/newedition',
+    name: 'NewEdition',
+    // route level code-splitting
+    // this generates a separate chunk (newedition.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "newedition" */ '../views/NewEdition.vue')
+  },
   {
     path: '/admin',
     name: 'Administration',
@@ -40,6 +48,14 @@ const routes = [
     // this generates a separate chunk (profile.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "profile" */ '../views/Profile.vue')
+  },
+  {
+    path: '/modify',
+    name: 'Modify',
+    // route level code-splitting
+    // this generates a separate chunk (modify.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "modify" */ '../views/Modify.vue')
   },
   {    
     path: '/about',

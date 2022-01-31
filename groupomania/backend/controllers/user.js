@@ -5,20 +5,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const token = connect.token;
 const fileSystem=require('fs');                     //donne accés aux opérations systèmes, par exemple la suppression de fichier
-
-
-/*exports.userLogin=(req,res,next)=>{
-    User.findOne({email : req.body.email})
-        .then(user=>{
-            if(!user){
-                return res.status(401).json({error:"l'utilisateur n'existe pas"})
-            }
-            //console.log('found'); //ok
-        
-            res.status(200).json({user}) //on récupere les infos de user
-        })
-    }
-*/
         
 exports.userLogin=(req,res,next)=>{
     User.findOne({email : req.body.email})
@@ -82,14 +68,18 @@ exports.getProfile = (req, res, next) => {
             if(!user){
                 return res.status(401).json({error:"l'utilisateur n'existe pas"})
             }
-            //console.log('found'); //ok
-        
+            /*console.log('getProfile')
+            console.log('found'); //ok
+            console.log(user);
+            console.log('id:'+user._id)*/
             res.status(200).json({user}) //on récupere les infos de user
             })
 }
 
-exports.udateProfile = (req,res,next) => {
-    let diskImageUrl;
+exports.updateProfile = (req,res,next) => {
+    console.log('updateProfile');
+    console.log(req);
+    /*let diskImageUrl;
     let key='15';
 
     const userObject = req.file ?
@@ -97,10 +87,10 @@ exports.udateProfile = (req,res,next) => {
             ...JSON.parse(req.body.user),
             imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
         } : { ...req.body };
-
+    
     User.findOne({ _id: req.params.id })
         .then((user)=>{
-            diskImageUrl=user.imageUrl;
+           // diskImageUrl=user.imageUrl;
             if (userObject.imageUrl){
                 const filename=diskImageUrl.split('/images/')[1]; 
                 fileSystem.unlink(`./images/${filename}`, ()=>console.log('fichier supprimé'))
@@ -108,9 +98,21 @@ exports.udateProfile = (req,res,next) => {
             else{console.log("image non modifiée")};
         })
         .catch(() => diskImageUrl='')
-
-
-    User.updateOne({ _id: req.params.id }, { ...userObject, _id : req.params.id })     //on recherche dans la DB, l'objet ayant pour _id, celui passé en paramétre)     //on recherche dans la DB, l'objet ayant pour _id, celui passé en paramétre pour pouvoir le modifier
+*/
+    console.log('update');
+    console.log(req);
+    const id=req.headers.authorization.split(' ')[0]; 
+    //let hash=bcrypt.hash(req.body.password, 10)
+    User.updateOne({ _id: id }, { //on recherche dans la DB, l'objet ayant pour _id, celui passé en paramétre)
+        email:req.body.email,
+        name:req.body.name,
+        firstname:req.body.firstname,
+        service:req.body.service,
+        rank:req.body.rank,
+        description:req.body.description,
+        //password:hash,
+        _id : id }) //on recherche dans la DB, l'objet ayant pour _id, celui passé en paramétre pour pouvoir le modifier
+                  
         .then(() => res.status(200).json({message : 'user mise à jour'}))
         .catch((error) =>{
              res.status(400).json({ error })
@@ -118,17 +120,17 @@ exports.udateProfile = (req,res,next) => {
 };
 
 exports.userDelete = (req,res,next) => {
-    User.findOne({ _id: req.params.id })
+    const id=req.headers.authorization.split(' ')[0];
+    User.findOne({ _id: id })
         .then(user=>{
-            const filename=user.imageUrl.split('/images/')[1]; // pour récupérer le nom du fichier à supprimer, on récupére l'image URL. l'image url contient le chemin complet répertoire('/image/')+nom. avec le split on obtient un tableau et on ne garde que la partie après le répertoire càd le nom du fichier
-            fileSystem.unlink(`./images/${filename}`, ()=>        // on appele la méthode unlink de fs pour supprimer le fichier .unlink('chemin+nom du fichier à supprimer', fonction à éxécuter quand la suppression est effectuée)
-                User.deleteOne({ _id: req.params.id })
-                    .then(() => res.status(200).json({ message: 'sauce supprimée' }))
-                    .catch(error => {
+            console.log('delete');
+            console.log(user);
+            User.deleteOne({ _id: id })
+                .then(() => res.status(200).json({ message: 'profil supprimée' }))
+                .catch(error => {
                         res.status(400).json({ error })
-                    })
-                    )
-                })
+                })   
+        })
         .catch((error) => {
             res.status(500).json({ error })
         });

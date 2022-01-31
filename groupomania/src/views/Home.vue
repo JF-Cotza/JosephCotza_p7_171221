@@ -112,11 +112,12 @@ export default {
         email:this.email,
         password:this.password
       })
-      .then(function(response){ // une fois le résultat de storeCreateAccount reçu
-        console.log('home.vue');
-        console.log(response.data); // on reçoit bien les infos du backend et donc de la db 
+      .then(function(){ //response une fois le résultat de storeCreateAccount reçu
+        //console.log('home.vue');
+        //console.log(response.data); // on reçoit bien les infos du backend et donc de la db 
         //  this is undefined => on crée $this pour y avoir accés
         $this.$router.push('Logged'); // on accéde à la route 'Logged' soit avec son nom soit avec le chemin relatif '/logged'
+        $this.getAllPublications();
       })
       .catch(function(error){
         console.log('home.vue');
@@ -162,11 +163,23 @@ export default {
         console.log('email: '+this.email)
       }
     },
+    getAllPublications(){
+      let $this=this
+      this.$store.dispatch('storeGetAllPublications')
+      .then(function(res){
+        $this.$store.state.publications=(res.data);
+        console.log('home>publications');
+        console.log(res.data)
+      })
+      .catch(function(error){
+        console.log(error.message)
+      })   
+    },
     mounted:function(){      //lors de la création de la vue on vérifie que le rang est différent de -1 car -1= déconnecté
    //         const $this=this;
             if(this.$store.state.user.rank!=-1){
                 this.$router.push('/logged');
-                //console.log(this.$store.state.user);
+                console.log(this.$store.state.user);
                 this.$store.state.operatingStatus='logged';
                 return;     // pour désactiver la suite du code si on est considéré comme déconnecté
             }

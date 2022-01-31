@@ -5,11 +5,15 @@ const toPublicationFunction=require('../controllers/publications');
 const checker=require('../middleware/auth');
 const multer=require('../middleware/multer');
 
-//router.post('/', checker,multer, toPublicationFunction.createPublication); //multer après authentification pour éviter enregitrement images inutiles
+const list=require('../middleware/consoleRoute')
+
+router.post('/create', list, checker, multer, toPublicationFunction.createPublication); //multer après authentification pour éviter enregitrement images inutiles
 //router.post('/:id/like',checker, toPublicationFunction.likes);
-//router.get('/', checker, multer, toPublicationFunction.getAllPublications);
-//router.get('/:id', checker,multer, toPublicationFunction.getOnePublications);
-//router.put('/:id',checker, multer, toPublicationFunction.modifyPublication);
+router.get('/all', checker, multer, toPublicationFunction.getAllPublications);
+router.get('/getOne', checker,  multer, toPublicationFunction.getOnePublications);
+router.put('/update', checker, multer, toPublicationFunction.modifyPublication);
+//commenter
+router.post('/comment',list, checker, toPublicationFunction.addComment);
 //router.delete('/:id',checker, multer, toPublicationFunction.deletePublication);
 
 module.exports = router;

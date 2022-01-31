@@ -11,8 +11,8 @@ router.post('/login', toUserFunction.userLogin);
 router.post('/signin', toUserFunction.userSignin);
 //routes connectée=>nécessite l'authentification
 router.get('/getProfile',checker, toUserFunction.getProfile);
-router.put('/profile', checker)//, toUserFunction.userProfile);
-router.delete('/delete', checker)//, toUserFunction.userDelete);
+router.put('/update', checker, toUserFunction.updateProfile);
+router.delete('/delete', checker, toUserFunction.userDelete);
 
 
 module.exports = router;
