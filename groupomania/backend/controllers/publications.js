@@ -5,24 +5,25 @@ const Comment = require('../models/comment');
 const fileSystem=require('fs');                     //donne accés aux opérations systèmes, par exemple la suppression de fichier
 
 exports.createPublication = (req,res, next) => {
-    //console.log('createPublication');
-    //console.log(req.body);
+    console.log('createPublication');
+    console.log(req.body);
+    console.log(req.body.file);
+    //console.log(req.body.file.name)
     //console.log(req.header);
 
 /*  const publicationParsing=JSON.parse(req.body.publication)
     delete publicationParsing._id; // pour supprimer un id présent dans la req
     console.log(publicationParsing);*/
-    const publication=new Publication({
-            
-            userId:req.body.publication.maker,       // 
-            date:req.body.publication.date,
-            title:req.body.publication.title,                               //0: masqué, 1:publié visible, 2:updated, 3:validé par admin
-            texte:req.body.publication.texte,
-            file:req.body.publication.file
-            //image:{type
-            //image:`${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
-            
-        }
+    const publication=new Publication({        
+        userId:req.body.maker,       // 
+        date:req.body.date,
+        title:req.body.title,                               //0: masqué, 1:publié visible, 2:updated, 3:validé par admin
+        texte:req.body.texte,
+        //file:req.body.publication.file
+        //image:{type
+        //image:`${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+        
+    }
     );
     publication.save()
         .then(()=>{
@@ -32,11 +33,20 @@ exports.createPublication = (req,res, next) => {
             );
 };
 
-
 exports.getAllPublications = (req,res,next) => {
     Publication.find()                  //find permet de chercher dans la DB. sans rien = tous
         .then ((publications)=>{
             res.status(200).json(publications)
+            })
+        .catch (error => {
+            res.status(400).json({error})
+        })
+};
+
+exports.getAllComments = (req,res,next) => {
+    Comment.find()                  //find permet de chercher dans la DB. sans rien = tous
+        .then ((comments)=>{
+            res.status(200).json(comments)
             })
         .catch (error => {
             res.status(400).json({error})
@@ -104,6 +114,23 @@ exports.addComment=(req,res,next)=>{
             res.status(400).json({error})}
             );
 };
+
+exports.onePublicationComments= (req, res, next) => {
+    Comment.find( { publicationId : req.query.id })     //on recherche dans la DB, l'objet ayant pour _id, celui passé en paramétre
+        .then(comments => {
+            console.log('onePubComments');
+            //console.log(comments)
+            //console.log(publicationId)
+            //publication.likes=publication.usersLiked.length;
+            //publication.dislikes=publication.usersDisliked.length;
+            res.status(200).json(comments); 
+        })
+        .catch((error) => {
+            res.status(400).json({ error })
+        })
+};
+
+
 
 /*
 exports.deleteSauce = (req,res,next) => {

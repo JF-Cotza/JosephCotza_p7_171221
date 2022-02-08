@@ -7,13 +7,15 @@ const multer=require('../middleware/multer');
 
 const list=require('../middleware/consoleRoute')
 
-router.post('/create', list, checker, multer, toPublicationFunction.createPublication); //multer après authentification pour éviter enregitrement images inutiles
+router.post('/create', checker, multer)//, toPublicationFunction.createPublication); //multer après authentification pour éviter enregitrement images inutiles
 //router.post('/:id/like',checker, toPublicationFunction.likes);
 router.get('/all', checker, multer, toPublicationFunction.getAllPublications);
-router.get('/getOne', checker,  multer, toPublicationFunction.getOnePublications);
+router.get('/getOne', checker, multer, toPublicationFunction.getOnePublications);
 router.put('/update', checker, multer, toPublicationFunction.modifyPublication);
 //commenter
-router.post('/comment',list, checker, toPublicationFunction.addComment);
+router.post('/comment', checker, toPublicationFunction.addComment);
+router.get('/allComments', checker, toPublicationFunction.getAllComments);
+router.get('/listComments',list, checker, toPublicationFunction.onePublicationComments);
 //router.delete('/:id',checker, multer, toPublicationFunction.deletePublication);
 
 module.exports = router;

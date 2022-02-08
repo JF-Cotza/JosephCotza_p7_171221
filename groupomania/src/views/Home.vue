@@ -118,6 +118,7 @@ export default {
         //  this is undefined => on crée $this pour y avoir accés
         $this.$router.push('Logged'); // on accéde à la route 'Logged' soit avec son nom soit avec le chemin relatif '/logged'
         $this.getAllPublications();
+        $this.getAllComments();
       })
       .catch(function(error){
         console.log('home.vue');
@@ -169,6 +170,17 @@ export default {
       .then(function(res){
         $this.$store.state.publications=(res.data);
         console.log('home>publications');
+        console.log(res.data)
+      })
+      .catch(function(error){
+        console.log(error.message)
+      })   
+    },getAllComments(){
+      let $this=this
+      this.$store.dispatch('storeGetAllComments')
+      .then(function(res){
+        $this.$store.state.comments=(res.data);
+        console.log('home>comments');
         console.log(res.data)
       })
       .catch(function(error){

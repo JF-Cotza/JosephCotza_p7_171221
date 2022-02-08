@@ -35,6 +35,9 @@ export default{
       this.$store.state.user.rank=-1;//sinon même déconnecté les boutons du mode de connexion apparaissent
       this.$store.commit('logout');
       this.$router.push('/');
+    },
+    setStatusConnected(){
+      localStorage.removeItem('publicationalister');
     }
   },
   created:function(){
@@ -103,5 +106,61 @@ input, .input{
   justify-content: space-between;
 }
 
+li{
+    list-style: none;
+}
+.edition{
+    border:1px solid blue;
+    background: cadetblue;
+    width: 50%;
+    min-width: 300px;
+    margin: 5px auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
 
+.edition>*{
+    width: 95%;
+    margin: auto;
+    text-align: left;
+}
+
+.edition div{
+    display: flex;
+    justify-content: space-between;
+}
+
+.edition div button{
+    width:fit-content;
+}
+
+.comment{
+    width: 50%;
+    min-width: 300px;
+    margin: 5px auto;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    background: yellow;
+}
+
+
+.comment input, .commentlist{
+    width: 90%;
+    margin: 5px auto;
+    background: red;
+}
+
+.new{
+    background: green;
+}
+
+.masked {
+  display:none,
+}
+
+a{
+  text-decoration: none;
+}
 </style>

@@ -1,11 +1,13 @@
 <template>
     <div>
-        <p>Title<input v-model='title'></p>
-        <p>{{ texte.length }}/150</p>
-        <input type='file' @change='fileName'>
-        <p><textarea v-model='texte' :title='texte.length' maxlength="150"></textarea></p>
+
+            <p>Title<input v-model='title'></p>
+            <p>{{ texte.length }}/150</p>
+            <input type='file' @change='fileName'>
+            <p><textarea v-model='texte' :title='texte.length' maxlength="150"></textarea></p>
         
-        <button @click='creer'>Valider</button>
+            <button @click='creer'>Valider</button>
+    
     </div>    
 </template>
 

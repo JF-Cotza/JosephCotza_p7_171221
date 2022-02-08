@@ -6,8 +6,8 @@ const publicationSchema = mongoose.Schema({                            //on cré
     status:{type:String, default:1},               //0: masqué, 1:publié visible, 2:updated, 3:validé par admin
     title:{type:String, default:''},
     texte:{type:String, default:''},
-    image:{type:String, default:''},
-    like: { type: Object, default:{} }            //{like:'0',memberId:[],like:'1',memberId:[]}
+    //file:{type:String, default:''},
+    //like: { type: Object, default:{} }            //{like:'0',memberId:[],like:'1',memberId:[]}
 });
 
 module.exports = mongoose.model('Publication', publicationSchema);            //on l'exporte

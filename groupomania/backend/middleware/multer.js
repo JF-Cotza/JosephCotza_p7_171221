@@ -5,20 +5,28 @@ const MIMES_TYPES ={
     'image/png' : 'png'         
 };
 
+const list=(req,res,next)=>{
+    console.log(req.body.file.filename)
+    next();
+}
+
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
         callback(null,'images')            
     },
-      filename: (req, file, callback) =>{        
-        
-        const name=file.name.split(' ').join('_');
+    filename: (req, body,callback) =>{        
+        console.log(body)
+        /*
+        const name=req.body.file.name.split(' ').join('_');
+        */
+       let name='toto'
         const extension=MIMES_TYPES[file.mimetype];
 
         console.log('multer');
-        console.log(req);
-        console.log('name: '+name);
+        console.log(req.body);
+        //console.log('name: '+name);
         console.log('extension: '+extension);
-
+        
         if(!extension){console.log('format non reconnu')};
         if(!extension){
             console.log('multer if'+req);
@@ -27,8 +35,8 @@ const storage = multer.diskStorage({
         else{
             console.log('multer else'+req);
          callback(null, name + Date.now() + '.' + extension);
-        }                  
+        }    
     }
 })
 
- module.exports=multer({storage:storage}).single('body.file');
+module.exports=multer({storage:storage}).single('body.file');

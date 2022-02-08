@@ -53,7 +53,8 @@ export default createStore({
     userInfo:userDefaultInfo,
     initUser:{},
     singlePublication:{},
-    publication:[]
+    publication:[],
+    comments:[]
   },
   mutations: {
     setStatus(state,operatingStatus){
@@ -185,15 +186,10 @@ export default createStore({
          {userId: userInfo }
       )  
         .then(function(res){
-            //  console.log('storeGetProfile.then'); 
-            //  console.log(res.data);
               commit('setStatus','profile');
               commit('setUserInfos',res.data);
               commit('userCopy',res.data);
               commit('setError',false);
-             /* console.log('index>StoreGetProfile>.then');  
-              console.log(res.data);     // on console le retour du backend                    
-             */ 
             })
               .catch(function(error){
                 commit('setStatus','log');
@@ -204,31 +200,44 @@ export default createStore({
     },
     //publication
     storeCreatePublication({commit},publicationInfos){
-      let formData=new FormData
-      console.log('index>file');
-      console.log(publicationInfos);
+      let form=new FormData();
+      //let fs=require('fs');
       //console.log(publicationInfos.publication.file.name);
-      //let fileImport=imageFile.append('file',publicationInfos.publication.file, publicationInfos.publication.file.name )
-      //let fileImport=formData.append('username','Chis')
-     // fileImport+=imageFile.append('firstname','tata');
-      formData.append('username','Chis'); //fileImport;
-      publicationInfos.finish='tutu';
-      console.log('index>createPub');
-      console.log(formData)//fileImport);//publicationInfos);
-      this.operatingStatus='creating';
+      //formData=formData.append('file',publicationInfos.publication.file)//, publicationInfos.publication.file.name )
+      //let fileImport=
+      //let toast;
+      form.append('maker',publicationInfos.publication.maker);
+      form.append('date',publicationInfos.publication.date);
+      form.append('title',publicationInfos.publication.title);
+      form.append('text',publicationInfos.publication.texte);
+      form.append('file',publicationInfos.publication.file);
+      console.log('form')
+      //console.log(toast)
+
+      console.log(form.maker);
+      
+      console.log('index>file');
+      console.log(publicationInfos.publication.file);
+      //this.operatingStatus='creating';
       return new Promise ((resolve, reject)=>{     //on déclare une nouvelle fonction asynchrone (si ok, sinon)
         commit('setStatus','working');
+        /*axios({
+          method:'post',
+          url: defaultUrl+'/publications/create',
+          body:publicationInfos.publication,
+          data:form,
+        })*/
           instance.post('/publications/create',
-            publicationInfos,
-            { 
-              headers:{
-              "Content-type": "multipart/form-data"
+              publicationInfos,
+              {headers:{
+              "Content-type": "multipart/form-data",
               }
             }
           )  //on accéde à l'instance déclaré plus haut et on saisit le chemin vers la méthode dont on a besoin
               .then(function(res){
                 commit('setStatus','created');
                 commit('setError',false);
+                console.log('createpublication>then')
                 resolve(res);                     
               })
               .catch(function(error){
@@ -308,7 +317,47 @@ export default createStore({
           console.log('comment publication>then>res');
           console.log(res);
         })
-      }
+      },
+      storeGetAllComments({commit}){
+        this.operatingStatus='loading';
+        return new Promise ((resolve, reject)=>{
+        instance.get('/publications/allComments')  //on accéde à l'instance déclaré plus haut et on saisit le chemin vers la méthode dont on a besoin
+          .then(function(res){
+            commit('setStatus','loading');
+            commit('setError',false);
+            console.log('all')
+            console.log(res.data)
+            resolve(res);                     
+          })
+          .catch(function(error){
+            commit('setStatus','create');
+            commit('setError',true);
+            console.log(error)
+            reject(error);
+          })
+        }
+      )},
+      storeGetComments({commit},publicationId){
+        console.log('storeGetComments');
+        console.log(publicationId)
+        this.operatingStatus='loading';
+        return new Promise ((resolve, reject)=>{
+        instance.get('/publications/listComments',{params:{id:publicationId}})  //on accéde à l'instance déclaré plus haut et on saisit le chemin vers la méthode dont on a besoin
+          .then(function(res){
+            commit('setStatus','loading');
+            commit('setError',false);
+            console.log('storeGetComments')
+            console.log(res.data)
+            resolve(res);                     
+          })
+          .catch(function(error){
+            commit('setStatus','create');
+            commit('setError',true);
+            console.log(error)
+            reject(error);
+          })
+        }
+      )},
 
         //voir  https://fr.vuejs.org/v2/cookbook/using-axios-to-consume-apis.html pour axios
   },
