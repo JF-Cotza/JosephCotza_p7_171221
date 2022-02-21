@@ -22,7 +22,8 @@ let userDefaultInfo={
   password:'',
   service:'',
   description:'',
-  avatar:''
+  avatar:'',
+  
 };
 
 let statusDefault='log'; // log, loading, create, created, working, lost,logged
@@ -30,6 +31,7 @@ let statusDefault='log'; // log, loading, create, created, working, lost,logged
 let localStorageUser=localStorage.getItem('user');
 let userReturn;
 let statusReturn;
+
 if(!localStorageUser){
   userReturn=userDefault;
   statusReturn=statusDefault
@@ -54,7 +56,8 @@ export default createStore({
     initUser:{},
     singlePublication:{},
     publication:[],
-    comments:[]
+    comments:[],
+    file:{},
   },
   mutations: {
     setStatus(state,operatingStatus){
@@ -200,52 +203,55 @@ export default createStore({
     },
     //publication
     storeCreatePublication({commit},publicationInfos){
-      let form=new FormData();
-      //let fs=require('fs');
-      //console.log(publicationInfos.publication.file.name);
-      //formData=formData.append('file',publicationInfos.publication.file)//, publicationInfos.publication.file.name )
-      //let fileImport=
-      //let toast;
-      form.append('maker',publicationInfos.publication.maker);
-      form.append('date',publicationInfos.publication.date);
-      form.append('title',publicationInfos.publication.title);
-      form.append('text',publicationInfos.publication.texte);
-      form.append('file',publicationInfos.publication.file);
-      console.log('form')
-      //console.log(toast)
-
-      console.log(form.maker);
+      let form=new FormData()
+    
+      form.append('maker',publicationInfos.maker);
+      form.append('date',publicationInfos.date);
+      form.append('title',publicationInfos.title);
+      form.append('texte',publicationInfos.texte);
+      form.append('where','index');
       
-      console.log('index>file');
-      console.log(publicationInfos.publication.file);
-      //this.operatingStatus='creating';
-      return new Promise ((resolve, reject)=>{     //on déclare une nouvelle fonction asynchrone (si ok, sinon)
-        commit('setStatus','working');
-        /*axios({
-          method:'post',
-          url: defaultUrl+'/publications/create',
-          body:publicationInfos.publication,
-          data:form,
-        })*/
-          instance.post('/publications/create',
-              publicationInfos,
-              {headers:{
+      if(publicationInfos.file){
+        form.append('filename',publicationInfos.file);
+      }
+
+      console.log('source');
+      console.log(publicationInfos);
+   
+      axios({
+        url:defaultUrl+'/publications/create',
+        method:'POST',
+        headers:{
+          //crossdomain: true,
+          //'Content-Type':'undifined', //"multipart/form-data",
+          authorization:userReturn.userId+' '+userReturn.token
+        },
+        data:form,
+      })
+      
+      //return new Promise ((resolve, reject)=>{     //on déclare une nouvelle fonction asynchrone (si ok, sinon)
+        //commit('setStatus','working');
+        //  instance.post('/publications/create',
+          //    form,//publicationInfos,
+              /*{headers:{
               "Content-type": "multipart/form-data",
               }
-            }
-          )  //on accéde à l'instance déclaré plus haut et on saisit le chemin vers la méthode dont on a besoin
+            }*/
+          //)  //on accéde à l'instance déclaré plus haut et on saisit le chemin vers la méthode dont on a besoin
               .then(function(res){
                 commit('setStatus','created');
                 commit('setError',false);
-                console.log('createpublication>then')
-                resolve(res);                     
+                console.log('createpublication>then');
+                console.log(res);
+                //resolve(res);                     
               })
               .catch(function(error){
                 commit('setStatus','create');
                 commit('setError',true);
-                reject(error);
+                console.log(error.message)
+                //reject(error);
               })
-            })  
+            //})  
         },
       storeGetAllPublications({commit}){
         this.operatingStatus='loading';
@@ -295,9 +301,6 @@ export default createStore({
         instance.put('/publications/update',publicationInfos)  //on accéde à l'instance déclaré plus haut et on saisit le chemin vers la méthode dont on a besoin
           .then(function(res){
             commit('setStatus','updating');
-            //commit('setPublication',res.data);
-            //commit('setError',false);
-            //console.log('storelogaccount');
             console.log(res);     // on console le retour du backend
             //resolve(res);                     
           })

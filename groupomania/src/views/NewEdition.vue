@@ -3,80 +3,130 @@
 
             <p>Title<input v-model='title'></p>
             <p>{{ texte.length }}/150</p>
-            <input type='file' @change='fileName'>
-            <p><textarea v-model='texte' :title='texte.length' maxlength="150"></textarea></p>
-        
-            <button @click='creer'>Valider</button>
+            <label>Ajouter une image </label>
+            <div v-if="fileUpdated.size!=0">
+                <div v-if='fileUrl.length>0'>
+                <br>
+                    <img :src="fileUrl" alt="import image">
+                <br>
+                    <button @click='removeImage'>Annuler</button>
+                </div>
+                <input v-else type='file' @change='fileName' />
+            </div>
+            <input v-else type='file' @change='fileName' />
+            
+            <p>
+                <textarea v-model='texte' :title='texte.length' maxlength="150"></textarea>
+            </p>
+            
+            <button @click='creer' :disabled='isDisabled'>Valider</button>
     
     </div>    
 </template>
 
 <script>
+//test dans la page
 export default {
     name:'NewEdition',
     data(){
         return{
             title:'',
             texte:'',
-            urlimage:{},
-            urlfile:{},
+            fileUrl:'',
+            fileUpdated:'void',
         }
+    },
+    computed:{
+        isDisabled(){
+            if(this.fileUpdated!='void' || this.texte!=''){
+                return false
+            }
+            else {
+            return true
+            }
+        },
     },
     methods:{
         fileName(e){
-           // this.urlfile=e.target.files[0];            
-            let file=e.target.files[0] || e.dataTransfer.file;   
-            let reader=new FileReader();
-            let image=new Image();
-            //let $this=this;
-
-            console.log('file');
-            console.log(file);
-            
-            this.urlfile=file;
-            reader.onload=(e)=>{
-                image=e.target.result;
-                //console.log('onload');
-                //console.log(image)
-                return this.urlimage=image;
+            console.log('fileName')
+            if(e.target.files.length===0){
+                console.log('file length = 0')
+                return;
             }
-            reader.readAsDataURL(this.urlfile);
+            if(e.target.files[0].size===0)
+            {
+                console.log('fichier vide')
+                this.fileUpdated.size=0;
+                return ;    
+            }
+            console.log(e.target.files[0].size);
+            let fileToUpdate=e.target.files[0];
             
-            console.log('createImage');
-            console.log(image);
-            console.log('urliImage');
-            console.log(this.urlimage)
+            console.log('fileToUpdate')
+            console.log(fileToUpdate);
+            console.log(JSON.stringify(fileToUpdate));
+            
+            this.fileUpdated=fileToUpdate
+            // stockage file en localStorage 
+            if(fileToUpdate.type.indexOf('image')<0){
+                console.log('type invalide');
+                this.fileUpdated.size=0;
+                return ;
+            }
+
+            console.log(this.fileUpdated)
+            
+            let reader=new FileReader();
+            reader.onload=e=>{
+                this.fileUrl=e.target.result;
+                localStorage.setItem('image1',e.target.result);
+            }            
+            reader.readAsDataURL(fileToUpdate)
+            
+            localStorage.setItem('image',fileToUpdate);
+            localStorage.setItem('stringifiedImage',JSON.stringify(fileToUpdate))
+            console.log('ls image')
+            console.log(localStorage.getItem('image'));
+            console.log('ls stringified');
+            console.log(localStorage.getItem('stringifiedImage'))
+            
+            this.$store.state.user.file=fileToUpdate
+
         },
         removeImage(){
-            this.urlimage=''
+            this.fileUrl='',
+            this.fileUpdated='void'
+            localStorage.removeItem('image')
+            localStorage.removeItem('image1')
+            localStorage.removeItem('stringifiedImage')
         },
         creer(){
             let date=new Date();
-            /*
-            console.log('createur: '+this.$store.state.user.id);
-            console.log('date de création: '+date.getDate()+'/'+(date.getMonth()+1)+'/'+date.getFullYear()+'-'+date.getHours()+':'+date.getMinutes());
-            console.log('title: '+this.title);
-            console.log('texte: '+this.texte);
-            console.log('image: '+this.urlimage);
-            */
             let publication={
-                maker:this.$store.state.user.id,
-                date:date,
-                title:this.title,
-                texte:this.texte,
-                //image:this.urlimage,
-                file:this.urlfile,
+                maker:JSON.parse(localStorage.getItem('user')).userId,  //ok
+                date:date,                                              //ok
+                title:this.title,                                       //ok
+                texte:this.texte,                                       //ok
+                where:'newEdition.vue'                                  //ok
+                }
+            if(this.fileUpdated!='void')
+            {
+                console.log('file not void');
+                console.log(this.fileUpdated);
+                publication.file=this.fileUpdated;
             }
-            console.log('newEditions>publication');
-            console.log(publication);
-            let id=this.$store.state.user.id;
-            localStorage.setItem('publication',JSON.stringify(publication));
-            this.$store.dispatch('storeCreatePublication', {
-                id, 
-                publication}
-                )
-        }
-    }
+            else{
+                console.log('no file updated')
+            }
+                //file:localStorage.getItem('toto'),
+                //url:this.fileUrl,
+                
+                
+            this.$store.dispatch('storeCreatePublication',publication)
+        },
+    
+    }//fermeture methods
+//
 }
 </script>
 

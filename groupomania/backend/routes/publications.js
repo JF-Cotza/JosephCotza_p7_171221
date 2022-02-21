@@ -6,8 +6,9 @@ const checker=require('../middleware/auth');
 const multer=require('../middleware/multer');
 
 const list=require('../middleware/consoleRoute')
+//const testing=require('../middleware/testing')
 
-router.post('/create', checker, multer)//, toPublicationFunction.createPublication); //multer après authentification pour éviter enregitrement images inutiles
+router.post('/create', checker, multer, list, toPublicationFunction.createPublication); //multer après authentification pour éviter enregitrement images inutiles
 //router.post('/:id/like',checker, toPublicationFunction.likes);
 router.get('/all', checker, multer, toPublicationFunction.getAllPublications);
 router.get('/getOne', checker, multer, toPublicationFunction.getOnePublications);

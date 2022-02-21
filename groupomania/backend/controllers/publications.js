@@ -6,8 +6,9 @@ const fileSystem=require('fs');                     //donne accés aux opératio
 
 exports.createPublication = (req,res, next) => {
     console.log('createPublication');
+    req.body.where+=' / create publication';
     console.log(req.body);
-    console.log(req.body.file);
+    console.log(req.body.filename);
     //console.log(req.body.file.name)
     //console.log(req.header);
 
