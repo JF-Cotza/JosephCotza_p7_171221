@@ -1,19 +1,24 @@
 <template>
-  <div>
-     <div id="nav" v-if='this.$store.state.user.rank==-1'>
-      <router-link class="link" to="/" v-if="getStatus !='log'" @click='setStatusLog'>Home</router-link>
-      <router-link class="link" to="/signin" v-if="getStatus !='create'" @click='setStatusCreate'>S'enregistrer</router-link> 
-      <router-link class="link" to="/lostpassword" v-if="getStatus !='lost'" @click='setStatusLost'>Mot de passe perdu</router-link>
-      <router-link class="link" to="/about" v-if="getStatus !='about'" @click='setStatusAbout'>About</router-link>
+  <div class='relative'>
+    <img src="./assets/icon-left-font.svg" alt="" class='positionImage'>
+
+    <div class='positionDiv'>
+      <div id="nav" v-if='this.$store.state.user.rank==-1'>
+        <router-link class="link" to="/" v-if="getStatus !='log'" @click='setStatusLog'>Home</router-link>
+        <router-link class="link" to="/signin" v-if="getStatus !='create'" @click='setStatusCreate'>S'enregistrer</router-link> 
+        <router-link class="link" to="/lostpassword" v-if="getStatus !='lost'" @click='setStatusLost'>Mot de passe perdu</router-link>
+        <router-link class="link" to="/about" v-if="getStatus !='about'" @click='setStatusAbout'>About</router-link>
+      </div>
+      <div id="nav" v-else>
+        <router-link class="link" to="/logged" @click='setStatusConnected'>Connecté</router-link>
+        <router-link class="link" v-if='getRank==2' to="/admin" @click='setStatusAdmin'>Admin</router-link>
+        <router-link class="link" to="/profile">Mon Profil</router-link>
+        <button class="link" @click="disconnect" >déconnecter</button>
+      </div>
+      <router-view /> 
     </div>
-    <div id="nav" v-else>
-      <router-link class="link" to="/logged" @click='setStatusConnected'>Connecté</router-link>
-      <router-link class="link" v-if='getRank==2' to="/admin" @click='setStatusAdmin'>Admin</router-link>
-      <router-link class="link" to="/profile">Mon Profil</router-link>
-      <button class="link" @click="disconnect" >déconnecter</button>
-    </div>
-    <router-view /> 
-  </div>  
+  </div>
+
 </template>
 
 <script>
@@ -162,5 +167,39 @@ li{
 
 a{
   text-decoration: none;
+}
+
+.relative{
+  position:relative
+}
+
+.positionImage{
+  position: relative;
+  top:-125px;
+  width:100%;
+  left:0
+}
+
+.positionDiv{
+  position: relative;
+  top:-250px;
+  width:100%;
+  left:0
+}
+
+@media screen and (min-width:680px) {
+  .positionImage{
+    position: relative;
+    top:-250px;
+    width:100%;
+    left:0
+  }
+
+  .positionDiv{
+    position: relative;
+    top:-550px;
+    width:100%;
+    left:0
+}
 }
 </style>

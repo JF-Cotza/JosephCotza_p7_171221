@@ -7,25 +7,20 @@ module.exports = (req, res,next) =>{
     //console.log(req);
     try{
         const token = req.headers.authorization.split(' ')[1]; 
-        /*
-        console.log('auth.js');
-        console.log(req.headers.authorization);
-        console.log('token '+ token);
-        console.log('req body : ');
-        console.log(req.body.userId);
-        */
         const checkToken=jwt.verify(token,linkedKey);
         const userId=checkToken.userId;
-        /*
-        console.log('userId token: ')
-        console.log(userId);
-        */
+    
+        console.log('auth');
+        req.body.where+=' / auth';
+        console.log('Auth, req.data');
+        console.log(req.body);
+
         if(req.body.userId && req.body.userId !== userId){
             console.log('ok');
             throw 'user ID invalide'
         }
         else{
-            console.log('false');
+            //console.log('false');
             next();
         }
     }

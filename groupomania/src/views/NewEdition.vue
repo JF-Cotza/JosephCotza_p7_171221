@@ -1,6 +1,6 @@
 <template>
     <div>
-
+            <router-link to='Testing'>test image seule</router-link>
             <p>Title<input v-model='title'></p>
             <p>{{ texte.length }}/150</p>
             <label>Ajouter une image </label>
@@ -11,16 +11,16 @@
                 <br>
                     <button @click='removeImage'>Annuler</button>
                 </div>
-                <input v-else type='file' @change='fileName' />
+                <input v-else name='originalFile' type='file' @change='fileName' />
             </div>
-            <input v-else type='file' @change='fileName' />
+            <input v-else type='file' name='originalFile' @change='fileName' />
             
             <p>
                 <textarea v-model='texte' :title='texte.length' maxlength="150"></textarea>
             </p>
             
             <button @click='creer' :disabled='isDisabled'>Valider</button>
-    
+        <router-view></router-view>
     </div>    
 </template>
 

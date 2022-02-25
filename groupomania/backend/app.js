@@ -20,10 +20,11 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-app.use('/images', express.static(path.join(__dirname, 'images')));  //le répertoire est fixe => on utilise static pour pouvoir l'utiliser le répertoire dont le dirname est stipulé
 
 app.use('/api/publications', publicationsRoutes);
 app.use('/api/auth', userRoutes)
+
+app.use('/images', express.static(path.join(__dirname, 'images')));  //le répertoire est fixe => on utilise static pour pouvoir l'utiliser le répertoire dont le dirname est stipulé
 
 module.exports=app;
 
